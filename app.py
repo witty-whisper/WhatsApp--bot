@@ -37,6 +37,6 @@ def handle_message(data):
             headers = {"Authorization": f"Bearer {WHATSAPP_TOKEN}", "Content-Type": "application/json"}
             payload = {"messaging_product": "whatsapp", "to": from_number, "text": {"body": f"You said: {text_body}"}}
             requests.post(url, headers=headers, json=payload)
-    except Exception as e:
-        print("Error:", e)
-    return "ok"
+    eexcept Exception as e:
+        print("Error:", str(e))
+        return "ok"
