@@ -1,4 +1,4 @@
- import os
+handler = app import os
 import requests
 from flask import Flask, request
 
@@ -50,3 +50,4 @@ def handle_message(data):
 
 if __name__ == "__main__":
     app.run()
+handler = app
