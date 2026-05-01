@@ -1,6 +1,9 @@
 import os
 from flask import Flask, request
+import requests
 
+PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID")
+WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN")
 app = Flask(__name__)
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN")
 
@@ -15,9 +18,25 @@ def webhook():
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             return challenge, 200
         return "Forbidden", 403
-    
     if request.method == 'POST':
-        # Handle incoming WhatsApp messages
         data = request.get_json()
-        print(data)  # You can remove this later
-        return "OK", 200
+        handle_message(data)
+        return "ok", 200
+
+def handle_message(data):
+    try:
+        entry = data["entry"][0]
+        changes = entry["changes"][0]
+        value = changes["value"]
+        messages = value.get("messages", [])
+        if messages:
+            msg = messages[0]
+            from_number = msg["from"]
+            text_body = msg["text"]["body"]
+            url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
+            headers = {"Authorization": f"Bearer {WHATSAPP_TOKEN}", "Content-Type": "application/json"}
+            payload = {"messaging_product": "whatsapp", "to": from_number, "text": {"body": f"You said: {text_body}"}}
+            requests.post(url, headers=headers, json=payload)
+    except Exception as e:
+        print("Error:", e)
+    return "ok"
