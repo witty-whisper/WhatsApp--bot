@@ -12,7 +12,7 @@ def verify():
     if verify_token == VERIFY_TOKEN:
         return challenge
     return "Invalid", 403
-@app
+
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
